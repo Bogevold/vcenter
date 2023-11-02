@@ -138,6 +138,7 @@ def lagInventory(stdscr, headers):
     v.sort()
     if k != "miljoIgn":
       writeInventory(v, k)
+  sleep(4)
  
 traader = []
 # Miljølister
