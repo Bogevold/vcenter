@@ -12,6 +12,17 @@ import threading
 def basic_auth(username, password):
     token = b64encode(f"{username}:{password}".encode('utf-8')).decode("ascii")
     return f'Basic {token}'
+
+def isLocalIP(vm, auth):
+  api_url = f"{vmHost}rest/vcenter/vm/{vm}/guest/networking/interfaces"
+  try:
+    vmr = requests.get(api_url, headers=auth)
+    ips = [f["ip"]["ip_addresses"][0]["ip_address"] for f in vmr.json().get("value") if 1==1]
+    ipsf = list(filter(lambda x: not x.startswith('10.'), ips)) # Remove ips starting with 10. 
+    ipsf2 = list(filter(lambda x: not x.startswith('192.'), ips)) # Remove ips starting with 192. 
+    return len(ipsf2)>0
+  except Exception as err:
+    return false
  
 def getOs(vm, auth):
     api_url_vm_det = "https://vcprod.skead.no/rest/vcenter/vm/"
@@ -67,7 +78,9 @@ def lesMappe(headers, folderNm, folderId, folderNum, stdscr):
     hostnameFromGuest = getHostDns(vm["vm"], headers)
     vmName = vm["name"]
     host = vmName if hostnameFromGuest == "" else hostnameFromGuest
-    if folderNm == "SIAN ProdSupport":
+    if not isLocalIP(vm["vm"], headers):
+      lister["miljoDmz"].append(host)
+    elif folderNm == "SIAN ProdSupport":
       lister["miljoProd"].append(host)
     elif folderNm ==  "Linux-support":
       lister["miljoProd"].append(host)
@@ -135,9 +148,11 @@ lister = {
   "miljoUtv" :[],
   "miljoOppl":[],
   "miljoAnon":[],
-  "miljoIgn" :[],
+  "miljoIgn" :[], 
+  "miljoDmz" :[],
   "grpDb" :[],
   "osRhel":[],
-  "osOel" :[]}
+  "osOel" :[]
+    }
 headers = loginVCenter()
 curses.wrapper(lagInventory, headers)
