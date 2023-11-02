@@ -23,7 +23,7 @@ def isLocalIP(vm, auth):
     ipsf2 = list(filter(lambda x: not x.startswith('192.'), ips)) # Remove ips starting with 192. 
     return len(ipsf2)>0
   except Exception as err:
-    return false
+    return False
  
 def getOs(vm, auth):
     api_url_vm_det = f"{vmHost}rest/vcenter/vm/"
