@@ -26,7 +26,7 @@ def isLocalIP(vm, auth):
     return false
  
 def getOs(vm, auth):
-    api_url_vm_det = "https://vcprod.skead.no/rest/vcenter/vm/"
+    api_url_vm_det = f"{vmHost}rest/vcenter/vm/"
     vm_r = requests.get(api_url_vm_det + vm, headers=auth)
     os = vm_r.json().get("value")["guest_OS"]
     r_os = ""
@@ -39,7 +39,7 @@ def getOs(vm, auth):
     return r_os
  
 def getHostDns(vm, auth):
-    api_url_vm_host = f"https://vcprod.skead.no/rest/vcenter/vm/{vm}/guest/networking"
+    api_url_vm_host = f"{vmHost}rest/vcenter/vm/{vm}/guest/networking"
     try:
       vmh_r = requests.get(api_url_vm_host,headers=auth)
       dns = vmh_r.json().get("value")["dns_values"]["host_name"]
@@ -59,13 +59,13 @@ def loginVCenter():
   pw = getpass.getpass()
  
   auth_headers = { 'Authorization' : basic_auth(un,pw) }
-  api_url_auth = "https://vcprod.skead.no/api/session"
+  api_url_auth = f"{vmHost}api/session"
   aut_r = requests.post(api_url_auth, headers=auth_headers)
   headers = {"vmware-api-session-id":aut_r.json()}
   return headers
  
 def lesMappe(headers, folderNm, folderId, folderNum, stdscr):
-  api_url_vm = f"https://vcprod.skead.no/rest/vcenter/vm/?filter.power_states=POWERED_ON&filter.folders.1={folderId}"
+  api_url_vm = f"{vmHost}rest/vcenter/vm/?filter.power_states=POWERED_ON&filter.folders.1={folderId}"
   r2=requests.get(api_url_vm, headers=headers)
   vmEr=r2.json().get("value")
   antVmer = len(vmEr)
@@ -113,8 +113,8 @@ def lesMappe(headers, folderNm, folderId, folderNum, stdscr):
  
  
 def lagInventory(stdscr, headers):
-  api_url_top = "https://vcprod.skead.no/rest/vcenter/folder?filter.names.1=SIAN-MO"
-  api_url_sub = "https://vcprod.skead.no/rest/vcenter/folder?filter.parent_folders.1="
+  api_url_top = f"{vmHost}rest/vcenter/folder?filter.names.1=SIAN-MO"
+  api_url_sub = f"{vmHost}rest/vcenter/folder?filter.parent_folders.1="
   resp_top = requests.get(api_url_top, headers=headers)
   top_grp = resp_top.json().get("value")[0]["folder"]
   res_sub = requests.get(api_url_sub + top_grp, headers=headers)
@@ -156,5 +156,6 @@ lister = {
   "osRhel":[],
   "osOel" :[]
     }
+vmHost = "https://vcprod.skead.no/"
 headers = loginVCenter()
 curses.wrapper(lagInventory, headers)
