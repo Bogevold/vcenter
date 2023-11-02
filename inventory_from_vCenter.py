@@ -102,7 +102,7 @@ def lesMappe(headers, folderNm, folderId, folderNum, stdscr):
       lister["miljoAnon"].append(host)
     else:
       lister["miljoIgn"].append(host)
-    if re.search("db[0-9]{2}", host:
+    if re.search("db[0-9]{2}", host):
       lister["grpDb"].append(host)
     os = getOs(vm["vm"], headers)
     if os == "oel":
