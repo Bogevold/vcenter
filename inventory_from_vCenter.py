@@ -1,11 +1,12 @@
 #! /usr/bin/env python3
 import requests
 import json
-from base64 import b64encode
 import getpass
 import re
 import curses
 import threading
+from time import sleep
+from base64 import b64encode
  
 # Authorization token: we need to base 64 encode it
 # and then decode it to acsii as python 3 stores it as a byte string
