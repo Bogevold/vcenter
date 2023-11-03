@@ -21,7 +21,7 @@ def isLocalIP(vm, auth):
   try:
     vmr = requests.get(api_url, headers=auth) 
     if vmr.status_code != 200:
-      raise HttpError
+      raise lHttpError
     #ips = [f["ip"]["ip_addresses"][0]["ip_address"] for f in vmr.json().get("value") if 1==1]
     ips = []
     for i in vmr.json().get("value"):
@@ -30,8 +30,9 @@ def isLocalIP(vm, auth):
     ipsf = list(filter(lambda x: not x.startswith('10.'), ips)) # Remove ips starting with 10.
     ipsf2 = list(filter(lambda x: not x.startswith('192.'), ips)) # Remove ips starting with 192.
     return len(ipsf2)>0
-  except HttpError:
-    logging.error(f"Kunne ikke hente ip for {vm}: {vmr.json().get('value)['messages'][0]['default_message']}")  
+  except lHttpError:
+    logging.error(f"Kunne ikke hente ip for {vm}: {vmr.json().get('value)['messages'][0]['default_message']}")
+    return False  
   except Exception as err:
     return False
 
