@@ -168,6 +168,7 @@ lister = {
 
 logFil='inventoryFromVCenter.log'
 logging.basicConfig(filename=logFil, level=logging.DEBUG, format='%(asctime)s loglevel=%(levelname)s %(message)s')
+logging.setLevel(30)
 
 vmHost = "https://vcprod.skead.no/"
 headers = loginVCenter()
