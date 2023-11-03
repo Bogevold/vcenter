@@ -16,6 +16,9 @@ def basic_auth(username, password):
     token = b64encode(f"{username}:{password}".encode('utf-8')).decode("ascii")
     return f'Basic {token}'
 
+class lHttpError(Exception):
+  pass
+
 def isLocalIP(vm, auth):
   api_url = f"{vmHost}rest/vcenter/vm/{vm}/guest/networking/interfaces"
   try:
