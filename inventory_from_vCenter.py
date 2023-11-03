@@ -19,6 +19,11 @@ def basic_auth(username, password):
 class lHttpError(Exception):
   pass
 
+def getVmNameById(vm, auth):
+  api_url = f"{vmHost}rest/vcenter/vm/{vm}"
+  vmr = requests.get(api_url, headers=auth)
+  return vmr.json().get("value")["name"]
+
 def isLocalIP(vm, auth):
   api_url = f"{vmHost}rest/vcenter/vm/{vm}/guest/networking/interfaces"
   try:
@@ -34,7 +39,8 @@ def isLocalIP(vm, auth):
     ipsf2 = list(filter(lambda x: not x.startswith('192.'), ips)) # Remove ips starting with 192.
     return len(ipsf2)>0
   except lHttpError:
-    logging.error(f"Kunne ikke hente ip for {vm}: {vmr.json().get('value')['messages'][0]['default_message']}")
+    vmN = getVmNameById(vm, auth)
+    logging.error(f"Kunne ikke hente ip for {vmN}: {vmr.json().get('value')['messages'][0]['default_message']}")
     return False  
   except Exception as err:
     return False
