@@ -14,11 +14,15 @@ def basic_auth(username, password):
     token = b64encode(f"{username}:{password}".encode('utf-8')).decode("ascii")
     return f'Basic {token}'
 
-def isLocalIP(vm, auth):
+def isLocalIP(vm):
   api_url = f"{vmHost}rest/vcenter/vm/{vm}/guest/networking/interfaces"
   try:
     vmr = requests.get(api_url, headers=auth)
-    ips = [f["ip"]["ip_addresses"][0]["ip_address"] for f in vmr.json().get("value") if 1==1]
+    #ips = [f["ip"]["ip_addresses"][0]["ip_address"] for f in vmr.json().get("value") if 1==1]
+    ips = []
+    for i in vmr.json().get("value"):
+      for i2 in i["ip"]["ip_addresses"]:
+        ips.append(i2["ip_address"])
     ipsf = list(filter(lambda x: not x.startswith('10.'), ips)) # Remove ips starting with 10. 
     ipsf2 = list(filter(lambda x: not x.startswith('192.'), ips)) # Remove ips starting with 192. 
     return len(ipsf2)>0
