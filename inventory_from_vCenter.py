@@ -3,6 +3,7 @@ import requests
 import json
 import getpass
 import re
+import os
 import curses
 import threading
 import logging
