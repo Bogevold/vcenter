@@ -184,6 +184,6 @@ logFil='inventoryFromVCenter.log'
 logging.basicConfig(filename=logFil, level=logging.WARNING, format='%(asctime)s loglevel=%(levelname)s %(message)s')
 
 
-vmHost = "https://vcprod.skead.no/"
+vmHost = "https://{os.getenv('vmhost', None)}/"
 headers = loginVCenter()
 curses.wrapper(lagInventory, headers)
